@@ -1,0 +1,4 @@
+brew-git
+rstudio-desktop-bin
+yay
+yay-debug
