@@ -1,0 +1,7 @@
+[Added Associations]
+text/markdown=com.visualstudio.code.desktop;rstudio.desktop;org.zotero.Zotero.desktop;vim.desktop;
+text/plain=com.visualstudio.code.desktop;org.zotero.Zotero.desktop;vim.desktop;
+
+[Default Applications]
+text/markdown=com.visualstudio.code.desktop;
+text/plain=com.visualstudio.code.desktop;
