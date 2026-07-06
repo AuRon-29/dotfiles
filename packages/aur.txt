@@ -1,4 +1,4 @@
 brew-git
 rstudio-desktop-bin
+snapd
 yay
-yay-debug

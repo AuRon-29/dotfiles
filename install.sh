@@ -26,17 +26,37 @@ for pkg_dir in */; do
   pkg="${pkg_dir%/}"
   [[ "$pkg" == "packages" ]] && continue
   echo "  - $pkg"
+  stow -v --adopt "$pkg" 2>/dev/null || true
+  git checkout -- "$pkg" 2>/dev/null || true
   stow -v "$pkg"
 done
 
 echo "==> Activation des services système"
 mapfile -t sys_services < <(grep -v '@\.service$' packages/services-system.txt)
-sudo systemctl enable --now "${sys_services[@]}"
+for svc in "${sys_services[@]}"; do
+  if systemctl list-unit-files "$svc" --no-legend 2>/dev/null | grep -q .; then
+    sudo systemctl enable --now "$svc"
+  else
+    echo "  (ignoré, unité absente : $svc)"
+  fi
+done
 
-# Les templates (ex: getty@.service) s'activent sans --now (pas d'instance à démarrer)
-grep '@\.service$' packages/services-system.txt | xargs -r sudo systemctl enable
+grep '@\.service$' packages/services-system.txt | while read -r svc; do
+  if systemctl list-unit-files "$svc" --no-legend 2>/dev/null | grep -q .; then
+    sudo systemctl enable "$svc"
+  else
+    echo "  (ignoré, unité absente : $svc)"
+  fi
+done
 
 echo "==> Activation des services utilisateur"
-systemctl --user enable --now $(cat packages/services-user.txt)
+mapfile -t user_services < <(cat packages/services-user.txt)
+for svc in "${user_services[@]}"; do
+  if systemctl --user list-unit-files "$svc" --no-legend 2>/dev/null | grep -q .; then
+    systemctl --user enable --now "$svc"
+  else
+    echo "  (ignoré, unité absente : $svc)"
+  fi
+done
 
 echo "==> Terminé."
