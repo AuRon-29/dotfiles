@@ -1,0 +1,4 @@
+# Résidus de compilation AUR si jamais lancés ici par erreur
+*.pkg.tar.zst
+src/
+pkg/
